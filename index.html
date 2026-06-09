@@ -1,0 +1,520 @@
+```html
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PushAlone - Le Hub Standalone Ultime pour Ableton Push 2</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Urbanist:wght@400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Urbanist', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace']
+                    },
+                    colors: {
+                        cyberBlue: '#00BFFF',
+                        cyberDark: '#080d1a',
+                        cyberCard: '#0f172a',
+                        cyberBorder: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glow-cyan {
+            box-shadow: 0 0 25px rgba(0, 191, 255, 0.25);
+        }
+        .glow-text-cyan {
+            text-shadow: 0 0 12px rgba(0, 191, 255, 0.75);
+        }
+        .segment-display {
+            background-color: #030712;
+            border: 2px solid #1e293b;
+        }
+    </style>
+</head>
+<body class="bg-cyberDark text-slate-100 font-sans antialiased selection:bg-cyberBlue selection:text-black">
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 bg-cyberBlue text-black font-bold px-6 py-4 rounded-xl shadow-2xl z-50 transition-all duration-300 flex items-center gap-3">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-xl"></i>
+        <span id="toastMessage">Message de notification</span>
+    </div>
+
+    <!-- Header / Navigation Principale -->
+    <header class="fixed top-0 left-0 w-full bg-cyberDark/95 backdrop-blur-md border-b border-cyberBorder z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-8 h-8 bg-cyberBlue rounded flex items-center justify-center font-bold text-black font-poppins shadow-lg shadow-cyberBlue/40">A</div>
+                <span class="text-2xl font-bold font-poppins tracking-wider group-hover:text-cyberBlue transition-colors">PUSH<span class="text-cyberBlue">ALONE</span></span>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium tracking-wide">
+                <a href="#concept" class="hover:text-cyberBlue transition-colors">Concept</a>
+                <a href="#specs" class="hover:text-cyberBlue transition-colors">Spécifications</a>
+                <a href="#comparator" class="hover:text-cyberBlue transition-colors">Comparateur</a>
+                <a href="#indiegogo" class="text-cyberBlue border border-cyberBlue/30 px-4 py-1.5 rounded-full hover:bg-cyberBlue/10 transition-all">Campagne</a>
+            </nav>
+            
+            <button id="mobileMenuBtn" class="md:hidden text-2xl text-slate-100 hover:text-cyberBlue transition-colors" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        
+        <div id="mobileMenu" class="hidden md:hidden bg-cyberDark border-b border-cyberBorder px-6 py-4 flex flex-col gap-2 text-center">
+            <a href="#concept" class="block w-full py-2 hover:text-cyberBlue font-semibold">Concept</a>
+            <a href="#specs" class="block w-full py-2 hover:text-cyberBlue font-semibold">Spécifications</a>
+            <a href="#comparator" class="block w-full py-2 hover:text-cyberBlue font-semibold">Comparateur</a>
+            <a href="#indiegogo" class="block py-2 text-cyberBlue font-bold">Campagne Indiegogo</a>
+        </div>
+    </header>
+
+    <!-- ACCUEIL & PRESENTATION -->
+    <main class="pt-24">
+        <!-- Hero Section -->
+        <section class="relative py-20 md:py-32 overflow-hidden flex items-center">
+            <div class="absolute -top-40 -left-40 w-96 h-96 bg-cyberBlue/10 rounded-full filter blur-[120px]"></div>
+            <div class="absolute top-1/2 right-0 w-[500px] h-[500px] bg-cyberBlue/5 rounded-full filter blur-[150px]"></div>
+
+            <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6 text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-cyberBlue/10 border border-cyberBlue/30 text-cyberBlue rounded-full text-xs font-semibold tracking-wider uppercase">
+                        <span class="w-2 h-2 rounded-full bg-cyberBlue animate-pulse"></span> Concept de R&D Validé
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-extrabold font-poppins leading-tight tracking-tight">
+                        Libérez votre <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyberBlue to-cyan-400">Push 2</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl">
+                        Découvrez <strong>PushAlone</strong>. Un boîtier d'extension matériel clipsable qui transforme votre contrôleur Ableton Push 2 en une station de production 100% autonome et connectée, sans aucune limitation logicielle.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
+                        <a href="#indiegogo" class="px-8 py-4 bg-cyberBlue text-black font-extrabold rounded-xl text-center hover:bg-cyan-400 hover:scale-105 hover:shadow-lg hover:shadow-cyberBlue/20 transition-all">
+                            Soutenir sur Indiegogo (1 600$ CAD Goal)
+                        </a>
+                        <a href="#comparator" class="px-8 py-4 bg-slate-800 text-slate-100 font-semibold rounded-xl text-center border border-slate-700 hover:bg-slate-700 transition-all">
+                            Calculer mes Économies &rarr;
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Simulateur Interactif de Boîtier -->
+                <div class="lg:col-span-5 flex flex-col items-center">
+                    <div class="w-full max-w-sm bg-slate-950 border border-cyberBorder rounded-3xl p-6 shadow-2xl relative glow-cyan transition-transform hover:scale-[1.02] duration-500">
+                        <div class="absolute -top-3 left-6 px-4 py-1 bg-cyberBorder border border-slate-700 text-[10px] uppercase tracking-widest text-slate-400 rounded-full font-mono">
+                            Console Virtuelle PushAlone
+                        </div>
+                        
+                        <div class="h-44 w-full bg-zinc-900 border border-zinc-800 rounded-2xl flex flex-col justify-between p-4 relative overflow-hidden">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs text-zinc-500 font-mono tracking-wider">PUSHALONE R&D V1.2</span>
+                                <span class="flex items-center gap-1.5">
+                                    <span id="statusIndicator" class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                                    <span id="statusLabel" class="text-[10px] font-mono text-emerald-400">NOMADE</span>
+                                </span>
+                            </div>
+
+                            <div class="flex flex-col items-center justify-center my-2">
+                                <div class="segment-display rounded-lg px-6 py-3 flex items-center gap-3 select-none shadow-inner">
+                                    <span id="segmentValue" class="font-mono text-4xl text-cyan-400 glow-text-cyan tracking-widest">98%</span>
+                                    <span id="segmentSub" class="text-xs font-mono text-cyan-700 tracking-wider">BATTERY</span>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-center text-[10px] text-zinc-500 font-mono">
+                                <span>OUT: 12V DC (PUSH)</span>
+                                <span>IN: 20V DC (STUDIO)</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-cyberBorder space-y-4">
+                            <h3 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-cyberBlue"></i> Tester l'alimentation du boîtier :
+                            </h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button id="btnSimNomad" class="px-4 py-2 bg-cyberBlue text-black font-bold text-xs rounded-lg uppercase shadow hover:bg-cyan-400 transition-colors">
+                                    Mode Nomade
+                                </button>
+                                <button id="btnSimStudio" class="px-4 py-2 bg-slate-800 text-slate-300 font-bold text-xs rounded-lg uppercase border border-slate-700 hover:bg-slate-700 transition-colors">
+                                    Mode Studio
+                                </button>
+                            </div>
+                            <p id="simulatorFeedback" class="text-xs text-slate-400 text-center font-mono h-4">
+                                Pads Push allumés à 100% sur batterie.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Concept -->
+        <section id="concept" class="py-20 bg-slate-950/60 border-t border-cyberBorder">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl mx-auto text-center space-y-4 mb-16">
+                    <h2 class="text-3xl md:text-5xl font-extrabold font-poppins">Le Concept <span class="text-cyberBlue">PushAlone</span></h2>
+                    <div class="w-16 h-1 bg-cyberBlue mx-auto rounded-full"></div>
+                    <p class="text-slate-400 text-lg">
+                        Une architecture matérielle et logicielle optimisée pour redonner vie à votre contrôleur sans passer par l'écosystème fermé et limité d'un ordinateur classique.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-8 hover:border-cyberBlue/40 hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl bg-cyberBlue/10 border border-cyberBlue/20 flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-battery-three-quarters text-2xl text-cyberBlue"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-poppins mb-3">Autonomie Totale</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Équipé d'une batterie plate USB-C Power Delivery, PushAlone alimente simultanément l'ordinateur de bord et le Push 2 en 12V stable pour garantir 100% de luminosité sur vos pads.
+                        </p>
+                    </div>
+                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-8 hover:border-cyberBlue/40 hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl bg-cyberBlue/10 border border-cyberBlue/20 flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-wand-magic-sparkles text-2xl text-cyberBlue"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-poppins mb-3">Vrai CPU x86 (VSTs)</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Aucun compromis. Contrairement au Push 3 Standalone, PushAlone fait tourner un vrai Windows 11 complet. Vous pouvez y installer et jouer tous vos plug-ins VST tiers préférés (Serum, Kontakt, etc.).
+                        </p>
+                    </div>
+                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-8 hover:border-cyberBlue/40 hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl bg-cyberBlue/10 border border-cyberBlue/20 flex items-center justify-center mb-6">
+                            <i class="fa-solid fa-gauge-high text-2xl text-cyberBlue"></i>
+                        </div>
+                        <h3 class="text-xl font-bold font-poppins mb-3">Latence Imperceptible</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            En intégrant un DAC audio dédié de haute fidélité et des pilotes FlexASIO configurés au millième de seconde, la latence de jeu reste inférieure à 5 millisecondes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calculateur d'économies -->
+        <section id="comparator" class="py-20 border-t border-b border-cyberBorder bg-slate-900/20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl mx-auto text-center space-y-4 mb-16">
+                    <h2 class="text-3xl md:text-5xl font-extrabold font-poppins">Combien allez-vous <span class="text-cyberBlue">économiser</span> ?</h2>
+                    <div class="w-16 h-1 bg-cyberBlue mx-auto rounded-full"></div>
+                    <p class="text-slate-400 text-lg">
+                        Comparez l'investissement d'un PushAlone couplé à un Push 2 d'occasion face à l'achat d'un Push 3 Standalone neuf sur le marché québécois.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+                    <div class="lg:col-span-5 bg-cyberCard border border-cyberBorder rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold font-poppins mb-6 text-slate-200">Ajustez vos paramètres</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="push2Cost" class="block text-sm font-semibold text-slate-400 mb-2">
+                                        Prix d'un Push 2 d'occasion : <span id="push2CostVal" class="text-cyberBlue font-mono">450 $</span> CAD
+                                    </label>
+                                    <input type="range" id="push2Cost" min="300" max="650" step="10" value="450" class="w-full accent-cyberBlue bg-slate-900 cursor-pointer h-2 rounded-lg">
+                                    <div class="flex justify-between text-xs text-slate-500 font-mono mt-1">
+                                        <span>300 $</span>
+                                        <span>Kijiji / Marketplace moyen</span>
+                                        <span>650 $</span>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-slate-950/80 border border-slate-800 rounded-xl space-y-2">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-slate-500 font-mono">Prix de PushAlone :</span>
+                                        <span class="font-bold text-slate-300">1 200 $ CAD</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-slate-500 font-mono">Prix Push 3 Standalone :</span>
+                                        <span class="font-bold text-slate-300">1 999 $ CAD (+ taxes)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t border-cyberBorder text-center">
+                            <p class="text-xs text-slate-500">
+                                * Les prix incluent les taxes estimées pour le Québec (14.975%) pour une comparaison rigoureuse.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-cyberBlue/5 border border-cyberBlue/20 rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-cyberBlue/10 rounded-full filter blur-3xl"></div>
+                        
+                        <div class="space-y-6">
+                            <h3 class="text-2xl font-bold font-poppins text-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-wallet text-cyberBlue"></i> Votre Bilan Financier
+                            </h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-5 space-y-1">
+                                    <span class="text-xs uppercase text-slate-500 font-mono">Investissement PushAlone</span>
+                                    <p id="calcPushAloneTotal" class="text-3xl font-extrabold text-cyan-400 font-poppins">1 650 $ CAD</p>
+                                    <span class="text-xs text-slate-400 font-mono">(Push 2 d'occasion + boîtier)</span>
+                                </div>
+                                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-5 space-y-1">
+                                    <span class="text-xs uppercase text-slate-500 font-mono">Achat Push 3 Standalone</span>
+                                    <p id="calcPush3Total" class="text-3xl font-extrabold text-slate-500 font-poppins">2 298 $ CAD</p>
+                                    <span class="text-xs text-slate-400 font-mono">(Prix de détail avec taxes)</span>
+                                </div>
+                            </div>
+
+                            <div class="p-6 bg-cyberBlue/10 border border-cyberBlue/30 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider font-mono">Économie Nette Réalisée :</h4>
+                                    <p id="calcSavings" class="text-4xl font-extrabold text-cyberBlue font-poppins glow-text-cyan">648 $ CAD</p>
+                                </div>
+                                <div class="w-16 h-16 rounded-full bg-cyberBlue/20 flex items-center justify-center text-3xl text-cyberBlue">
+                                    <i class="fa-solid fa-piggy-bank"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t border-cyberBorder/30">
+                            <h4 class="text-sm font-bold text-slate-200 mb-2">Pourquoi cet investissement est imbattable ?</h4>
+                            <ul class="text-xs text-slate-400 space-y-1">
+                                <li><i class="fa-solid fa-chevron-right text-cyberBlue mr-1"></i> Économisez plus de 600$ sur le matériel de studio.</li>
+                                <li><i class="fa-solid fa-chevron-right text-cyberBlue mr-1"></i> Puissance d'un processeur AMD Ryzen 7 à 8 cœurs au lieu d'un processeur Intel i3 limité sur Push 3.</li>
+                                <li><i class="fa-solid fa-chevron-right text-cyberBlue mr-1"></i> Support complet de tous vos plugins de création (Serum, FabFilter, Kontakt, etc.).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Campagne Indiegogo -->
+        <section id="indiegogo" class="py-20 bg-slate-950/60 border-t border-cyberBorder relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-cyberBlue/10 border border-cyberBlue/30 text-cyberBlue rounded-full text-xs font-semibold tracking-wider uppercase">
+                        Financement Participatif Concept
+                    </div>
+                    <h2 class="text-4xl md:text-6xl font-extrabold font-poppins leading-tight">
+                        Soutenez le développement de <span class="text-cyberBlue">PushAlone</span>
+                    </h2>
+                    <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+                        Nous collectons des fonds pour acheter le matériel de test du premier prototype physique (processeur x86 Ryzen, batterie PD compacte, filaments d'essais R&D) et l'imprimante 3D fermée indispensable pour imprimer les pièces techniques solides (PETG/ASA).
+                    </p>
+                    <div class="space-y-4 bg-cyberCard border border-cyberBorder rounded-2xl p-6">
+                        <div class="flex justify-between items-center text-sm font-semibold font-mono">
+                            <span class="text-slate-400">Progression : <span class="text-cyberBlue" id="liveGoalVal">450 $</span> CAD</span>
+                            <span class="text-slate-400">Objectif Prototype : <span class="text-slate-200">1 600 $ CAD</span></span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-4 rounded-full overflow-hidden border border-slate-800 p-0.5">
+                            <div id="liveProgressBar" class="h-full bg-gradient-to-r from-cyberBlue to-cyan-400 rounded-full transition-all duration-1000" style="width: 28.125%;"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-slate-500 font-mono">
+                            <span id="liveBackersVal">8 Soutiens</span>
+                            <span>Financement Flexible</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="bg-cyberCard border border-cyberBlue/40 rounded-2xl p-6 shadow-xl relative cursor-pointer hover:scale-[1.02] transition-transform duration-300" onclick="simulateContribution(800, 'Ultra Early Bird')">
+                        <div class="absolute top-4 right-4 bg-cyberBlue/10 border border-cyberBlue/30 text-cyberBlue text-[10px] font-bold px-3 py-1 rounded-full uppercase">
+                            Ultra Limité
+                        </div>
+                        <h3 class="font-bold text-xl font-poppins text-slate-200">Palier : Early Bird</h3>
+                        <p class="text-2xl font-extrabold text-cyberBlue font-poppins mt-2">800 $ <span class="text-xs text-slate-500 font-normal">CAD</span></p>
+                        <p class="text-xs text-slate-400 mt-2">
+                            Le boîtier d'extension PushAlone complet livré en priorité à prix coûtant. Uniquement disponible pour les 15 premiers soutiens de la campagne de R&D.
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-cyberBorder flex justify-between items-center">
+                            <span class="text-xs text-emerald-400 font-mono"><i class="fa-solid fa-hourglass-half mr-1"></i> Plus que 4 disponibles !</span>
+                            <span class="text-xs text-cyberBlue font-bold underline">Soutenir &rarr;</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-6 shadow-xl cursor-pointer hover:border-cyberBlue/40 hover:scale-[1.02] transition-transform duration-300" onclick="simulateContribution(1200, 'Standard')">
+                        <h3 class="font-bold text-xl font-poppins text-slate-200">Palier : PushAlone Standard</h3>
+                        <p class="text-2xl font-extrabold text-slate-100 font-poppins mt-2">1 200 $ <span class="text-xs text-slate-500 font-normal">CAD</span></p>
+                        <p class="text-xs text-slate-400 mt-2">
+                            Obtenez l'extension PushAlone standard complète, incluant le boîtier imprimé en 3D en ASA/PETG solide, l'optimisation Tiny11 basse latence et la connectique interne assemblée.
+                        </p>
+                        <div class="mt-4 pt-4 border-t border-cyberBorder flex justify-between items-center">
+                            <span class="text-xs text-slate-500 font-mono">Livraison estimée : Décembre 2026</span>
+                            <span class="text-xs text-cyberBlue font-bold underline">Soutenir &rarr;</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-cyberBorder py-12 text-center text-slate-500 text-sm">
+        <div class="max-w-7xl mx-auto px-6 space-y-4">
+            <p class="font-bold font-poppins tracking-widest text-slate-400 uppercase">PUSH<span class="text-cyberBlue">ALONE</span></p>
+            <p class="text-xs max-w-lg mx-auto leading-relaxed">
+                PushAlone est un projet de recherche et développement indépendant et autonome de modifications matérielles. Ableton et Push sont des marques déposées de Ableton AG.
+            </p>
+            <div class="pt-4 border-t border-cyberBorder/30 flex justify-center gap-6 text-xs font-mono">
+                <span>R&D 2026 | Christophe, Montréal</span>
+                <span>Open-Source Hardware Concept</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS ET LOGIQUE INTERACTIVE -->
+    <script>
+        // Menu Mobile Toggle
+        const mobileMenu = document.getElementById('mobileMenu');
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+        document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+
+        // Toast Notifications
+        function showToast(title, message) {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMessage');
+            
+            toastMsg.textContent = `${title} : ${message}`;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Simulateur d'Alimentation
+        const segmentValue = document.getElementById('segmentValue');
+        const segmentSub = document.getElementById('segmentSub');
+        const statusLabel = document.getElementById('statusLabel');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const btnSimNomad = document.getElementById('btnSimNomad');
+        const btnSimStudio = document.getElementById('btnSimStudio');
+        const simulatorFeedback = document.getElementById('simulatorFeedback');
+
+        let simInterval = null;
+        let batteryPct = 98;
+
+        function runNomadSim() {
+            clearInterval(simInterval);
+            statusLabel.textContent = "NOMADE";
+            statusLabel.className = "text-[10px] font-mono text-emerald-400";
+            statusIndicator.className = "w-2 h-2 rounded-full bg-emerald-500 animate-ping";
+            segmentSub.textContent = "BATTERY";
+            segmentSub.className = "text-xs font-mono text-cyan-700 tracking-wider";
+            simulatorFeedback.textContent = "Pads Push allumés à 100% sur batterie.";
+
+            simInterval = setInterval(() => {
+                if (batteryPct > 5) {
+                    batteryPct--;
+                    segmentValue.textContent = batteryPct + "%";
+                } else {
+                    clearInterval(simInterval);
+                    segmentValue.textContent = "LOW";
+                    segmentSub.textContent = "CHARGE";
+                    segmentSub.className = "text-xs font-mono text-red-500 animate-pulse";
+                    simulatorFeedback.textContent = "Alerte : Batterie faible. Rebranchez le boîtier !";
+                }
+            }, 3000);
+        }
+
+        function runStudioSim() {
+            clearInterval(simInterval);
+            statusLabel.textContent = "RECHARGE";
+            statusLabel.className = "text-[10px] font-mono text-cyan-400";
+            statusIndicator.className = "w-2 h-2 rounded-full bg-cyan-500 animate-ping";
+            segmentSub.textContent = "STUDIO";
+            segmentSub.className = "text-xs font-mono text-cyan-700 tracking-wider";
+            simulatorFeedback.textContent = "Secteur branché (20V). Batterie en charge rapide.";
+
+            simInterval = setInterval(() => {
+                if (batteryPct < 100) {
+                    batteryPct++;
+                    segmentValue.textContent = batteryPct + "%";
+                } else {
+                    segmentValue.textContent = "FULL";
+                    clearInterval(simInterval);
+                }
+            }, 1000);
+        }
+
+        btnSimNomad.addEventListener('click', () => {
+            if (batteryPct >= 100) batteryPct = 98;
+            runNomadSim();
+            btnSimNomad.className = "px-4 py-2 bg-cyberBlue text-black font-bold text-xs rounded-lg uppercase shadow hover:bg-cyan-400 transition-colors";
+            btnSimStudio.className = "px-4 py-2 bg-slate-800 text-slate-300 font-bold text-xs rounded-lg uppercase border border-slate-700 hover:bg-slate-700 transition-colors";
+        });
+
+        btnSimStudio.addEventListener('click', () => {
+            runStudioSim();
+            btnSimStudio.className = "px-4 py-2 bg-cyberBlue text-black font-bold text-xs rounded-lg uppercase shadow hover:bg-cyan-400 transition-colors";
+            btnSimNomad.className = "px-4 py-2 bg-slate-800 text-slate-300 font-bold text-xs rounded-lg uppercase border border-slate-700 hover:bg-slate-700 transition-colors";
+        });
+
+        // Calculateur d'Économies
+        const push2CostInput = document.getElementById('push2Cost');
+        const push2CostValLabel = document.getElementById('push2CostVal');
+        const calcPushAloneTotal = document.getElementById('calcPushAloneTotal');
+        const calcPush3Total = document.getElementById('calcPush3Total');
+        const calcSavings = document.getElementById('calcSavings');
+
+        function performCalculation() {
+            const costPush2 = parseInt(push2CostInput.value);
+            push2CostValLabel.textContent = costPush2 + " $";
+
+            const alonePrice = 1200;
+            const push3Price = 1999;
+            const txRate = 1.14975; // Québec taxes
+
+            const aloneTotal = Math.round((alonePrice + costPush2) * txRate);
+            const push3Total = Math.round(push3Price * txRate);
+            const savingsTotal = push3Total - aloneTotal;
+
+            calcPushAloneTotal.textContent = aloneTotal.toLocaleString() + " $ CAD";
+            calcPush3Total.textContent = push3Total.toLocaleString() + " $ CAD";
+            calcSavings.textContent = savingsTotal.toLocaleString() + " $ CAD";
+        }
+
+        push2CostInput.addEventListener('input', performCalculation);
+
+        // Simulation Indiegogo
+        let indiegogoGoalVal = 450;
+        let backersVal = 8;
+        const liveGoalVal = document.getElementById('liveGoalVal');
+        const liveProgressBar = document.getElementById('liveProgressBar');
+        const liveBackersVal = document.getElementById('liveBackersVal');
+
+        function simulateContribution(amount, tierName) {
+            indiegogoGoalVal += amount;
+            backersVal += 1;
+
+            let percentage = (indiegogoGoalVal / 1600) * 100;
+            if (percentage > 100) percentage = 100;
+
+            liveGoalVal.textContent = indiegogoGoalVal.toLocaleString() + " $";
+            liveProgressBar.style.width = percentage + "%";
+            liveBackersVal.textContent = backersVal + " Soutiens";
+
+            showToast("Indiegogo", `Contribution simulée de ${amount}$ (${tierName}). Merci !`);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            runNomadSim();
+            performCalculation();
+        });
+    </script>
+</body>
+</html>
+
+```

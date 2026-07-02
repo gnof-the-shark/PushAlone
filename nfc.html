@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banque NFC pour Jeu</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f7;
+            margin: 0;
+            padding: 20px;
+            color: #1d1d1f;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1 { text-align: center; font-size: 24px; color: #0071e3; }
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e5ea;
+        }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+        button:disabled { background-color: #999; }
+        .status {
+            padding: 10px;
+            background: #e8f4fe;
+            border-radius: 8px;
+            color: #0071e3;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e5ea;
+        }
+        th { background-color: #f5f5f7; }
+        .btn-sec { background-color: #8e8e93; font-size: 14px; padding: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏦 Banque NFC du Jeu</h1>
+    <div id="status" class="status">Statut : Prêt</div>
+
+    <div class="section">
+        <h3>1. Enregistrer un nouveau joueur</h3>
+        <label for="playerName">Nom du joueur :</label>
+        <input type="text" id="playerName" placeholder="Ex: Christophe">
+        
+        <label for="initialBalance">Solde de départ ($) :</label>
+        <input type="number" id="initialBalance" value="1500">
+        
+        <button onclick="startNFCScan('register')">Scanner et lier la carte</button>
+    </div>
+
+    <div class="section">
+        <h3>2. Effectuer un paiement</h3>
+        <label for="amount">Montant ($) :</label>
+        <input type="number" id="amount" placeholder="0" min="1">
+        
+        <label for="transactionType">Action :</label>
+        <select id="transactionType">
+            <option value="remove">Débiter le joueur (Achat/Taxe)</option>
+            <option value="add">Créditer le joueur (Salaire/Gain)</option>
+        </select>
+        
+        <button onclick="startNFCScan('transaction')" style="background-color: #34c759;">Scanner la carte pour payer</button>
+    </div>
+
+    <div class="section">
+        <h3>3. Tableau des scores</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Joueur</th>
+                    <th>Solde</th>
+                    <th>ID Carte</th>
+                </tr>
+            </thead>
+            <tbody id="playersTable"></tbody>
+        </table>
+    </div>
+
+    <div class="section" style="border-bottom: none;">
+        <h3>4. Gestion des données (JSON)</h3>
+        <button class="btn-sec" onclick="exportJSON()">💾 Télécharger la sauvegarde (JSON)</button>
+        <button class="btn-sec" onclick="document.getElementById('importFile').click()">📂 Charger une sauvegarde</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importJSON(this)">
+        <button class="btn-sec" style="background-color: #ff3b30;" onclick="clearData()">⚠️ Réinitialiser la partie</button>
+    </div>
+</div>
+
+<script>
+    // Chargement initial depuis le LocalStorage (JSON) ou création d'un objet vide
+    let banque = JSON.parse(localStorage.getItem('banqueNFC')) || {}; 
+
+    let currentMode = null; 
+    const statusDiv = document.getElementById('status');
+    const playersTable = document.getElementById('playersTable');
+
+    // Mettre à jour l'affichage au démarrage
+    updateUI();
+
+    function updateUI() {
+        playersTable.innerHTML = '';
+        for (let uid in banque) {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${banque[uid].name}</strong></td>
+                <td>${banque[uid].balance} $</td>
+                <td style="font-size:12px; color:#666;">${uid}</td>
+            `;
+            playersTable.appendChild(tr);
+        }
+        // Sauvegarde automatique au format JSON textuel dans le navigateur
+        localStorage.setItem('banqueNFC', JSON.stringify(banque));
+    }
+
+    async function startNFCScan(mode) {
+        currentMode = mode;
+
+        if (!('NDEFReader' in window)) {
+            statusDiv.innerText = "Erreur : Votre navigateur ne supporte pas le Web NFC.";
+            statusDiv.style.background = "#ffebee"; statusDiv.style.color = "#c62828";
+            return;
+        }
+
+        try {
+            statusDiv.innerText = "Approchez la carte NFC...";
+            statusDiv.style.background = "#fff3e0"; statusDiv.style.color = "#ef6c00";
+
+            const ndef = new NDEFReader();
+            await ndef.scan();
+
+            ndef.onreading = event => {
+                const uid = event.serialNumber;
+                if (currentMode === 'register') { registerPlayer(uid); } 
+                else if (currentMode === 'transaction') { processTransaction(uid); }
+            };
+
+        } catch (error) {
+            statusDiv.innerText = "Erreur NFC : " + error;
+        }
+    }
+
+    function registerPlayer(uid) {
+        const name = document.getElementById('playerName').value.trim();
+        const balance = parseInt(document.getElementById('initialBalance').value);
+
+        if (!name) { statusDiv.innerText = "Entrez un nom avant de scanner."; return; }
+
+        banque[uid] = { name: name, balance: balance };
+        statusDiv.innerText = `Compte créé pour ${name} !`;
+        statusDiv.style.background = "#e8f4fe"; statusDiv.style.color = "#0071e3";
+        
+        document.getElementById('playerName').value = '';
+        updateUI();
+    }
+
+    function processTransaction(uid) {
+        const amount = parseInt(document.getElementById('amount').value);
+        const type = document.getElementById('transactionType').value;
+
+        if (!amount || amount <= 0) { statusDiv.innerText = "Entrez un montant valide."; return; }
+        if (!banque[uid]) { statusDiv.innerText = "Carte inconnue."; return; }
+
+        if (type === 'remove') {
+            if (banque[uid].balance < amount) { statusDiv.innerText = `Fonds insuffisants !`; return; }
+            banque[uid].balance -= amount;
+        } else {
+            banque[uid].balance += amount;
+        }
+
+        statusDiv.innerText = "Transaction réussie !";
+        statusDiv.style.background = "#e8f4fe"; statusDiv.style.color = "#0071e3";
+        document.getElementById('amount').value = '';
+        updateUI();
+    }
+
+    // Exporter les données sous forme de fichier texte .json
+    function exportJSON() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(banque, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "banque_nfc_sauvegarde.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    // Charger un fichier .json externe
+    function importJSON(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                banque = JSON.parse(e.target.result);
+                updateUI();
+                statusDiv.innerText = "Sauvegarde JSON chargée avec succès !";
+            } catch (err) {
+                statusDiv.innerText = "Erreur : Fichier JSON invalide.";
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function clearData() {
+        if (confirm("Voulez-vous vraiment effacer tous les comptes et remettre la banque à zéro ?")) {
+            banque = {};
+            updateUI();
+            statusDiv.innerText = "Données réinitialisées.";
+        }
+    }
+</script>
+
+</body>
+</html>
